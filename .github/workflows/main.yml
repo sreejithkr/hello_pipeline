@@ -1,4 +1,4 @@
-name: Build Flutter Android and iOS
+name: Flutter CI
 
 on:
   push:
@@ -10,45 +10,26 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
-
-    strategy:
-      matrix:
-        platform: [android, ios]
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v3
-      with:
-        flutter-version: '3.0.0'  # You can specify the version you're using
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.0.0'
 
-    - name: Install dependencies
-      run: |
-        flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
 
-    - name: Build Android
-      if: matrix.platform == 'android'
-      run: |
-        flutter build apk --release
+      - name: Run tests
+        run: flutter test
 
-    - name: Build iOS
-      if: matrix.platform == 'ios'
-      run: |
-        flutter build ios --release --no-codesign
+      - name: Build APK
+        run: flutter build apk --release
 
-    - name: Upload Android artifact
-      if: matrix.platform == 'android'
-      uses: actions/upload-artifact@v3
-      with:
-        name: android-release-apk
-        path: build/app/outputs/flutter-apk/app-release.apk
-
-    - name: Upload iOS artifact
-      if: matrix.platform == 'ios'
-      uses: actions/upload-artifact@v3
-      with:
-        name: ios-release-ipa
-        path: build/ios/iphoneos/Runner.app
+      - name: Build iOS (only on macOS)
+        if: runner.os == 'macOS'
+        run: flutter build ios --release
