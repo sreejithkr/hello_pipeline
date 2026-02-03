@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
      
-      - uses: ./.github/action/setup-flutter.yml
+      - uses: ./.github/action
 
       - name: Static analysis
         run: flutter analyze
