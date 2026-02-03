@@ -11,10 +11,7 @@ jobs:
     name: Test & Analyze
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-     
+    steps: 
       - uses: ./.github/action
 
       - name: Static analysis
